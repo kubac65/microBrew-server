@@ -1,0 +1,33 @@
+version: "3.7"
+
+services:
+  server:
+    image: kubac65/micro-brew-server:latest
+    ports:
+      - "52100"
+    networks:
+      - backend
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+      DB: db:8086
+      LISTEN_PORT: 52400
+
+  db:
+    image: influxdb:latest
+    networks:
+      - backend
+    volumes:
+      - data-volume:/var/lib/db
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+      INFLUX_DB: micro-brew
+
+networks:
+  backend:
+  frontend:
+volumes:
+  data-volume:
