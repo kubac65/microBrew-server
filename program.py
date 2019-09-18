@@ -2,9 +2,7 @@ import logging
 import socket
 import os
 
-from microBrew import Server, TempLogger, TempRange
-
-listen_port = 52400
+from microBrew import Server, TempLogger, TempRange, DecisionModule
 
 def get_temp_logger():
     db_host = os.environ['DB_HOST']
@@ -18,7 +16,7 @@ def get_temp_range():
     return TempRange()
 
 def get_decision_module():
-    return {}
+    return DecisionModule()
 
 def main():
     temp_loger = get_temp_logger()

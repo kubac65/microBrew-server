@@ -1,7 +1,7 @@
 import socket
 import logging
 
-listen_port = 52400
+listen_port = 52100
 
 class Server(object):
     def __init__(self, temp_logger, temp_range, decision_module):
@@ -17,9 +17,8 @@ class Server(object):
         self.__listen = True
 
         while self.__listen:
-            connection, client_address = self.__sock.accept()
+            connection, _ = self.__sock.accept()
             logging.info('Controller connection accepted')
-
 
             received_msg = []
             continue_reading = True

@@ -11,8 +11,11 @@ services:
       restart_policy:
         condition: on-failure
     environment:
-      DB: db:8086
-      LISTEN_PORT: 52400
+      DB_HOST: db
+      DB_PORT: 8086
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      DB_DB_DATABASE: micro_brew
 
   db:
     image: influxdb:latest
