@@ -5,7 +5,7 @@ services:
     image: kubac65/micro-brew-server:latest
     hostname: server
     ports:
-      - "52100:52100"
+      - "52100:52100" # Expose port 52100 for the controllers to connect to
     networks:
       - backend
     depends_on:
@@ -23,9 +23,6 @@ services:
   db:
     image: influxdb:latest
     hostname: db
-    ports:
-      - "8086:8086"
-      - "8083:8083"
     networks:
       - backend
     volumes:
@@ -35,7 +32,6 @@ services:
         condition: on-failure
     environment:
       INFLUX_DB: micro-brew
-      INFLUX_ADMIN_ENABLED: "true"
 
 networks:
   backend:
