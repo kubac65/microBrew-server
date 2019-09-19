@@ -3,10 +3,13 @@ version: "3.7"
 services:
   server:
     image: kubac65/micro-brew-server:latest
+    hostname: server
     ports:
-      - "52100"
+      - "52100:52100"
     networks:
       - backend
+    depends_on:
+      - db
     deploy:
       restart_policy:
         condition: on-failure
@@ -15,10 +18,14 @@ services:
       DB_PORT: 8086
       DB_USERNAME: root
       DB_PASSWORD: root
-      DB_DB_DATABASE: micro_brew
+      DB_DATABASE: micro-brew
 
   db:
     image: influxdb:latest
+    hostname: db
+    ports:
+      - "8086:8086"
+      - "8083:8083"
     networks:
       - backend
     volumes:
@@ -28,9 +35,9 @@ services:
         condition: on-failure
     environment:
       INFLUX_DB: micro-brew
+      INFLUX_ADMIN_ENABLED: "true"
 
 networks:
   backend:
-  frontend:
 volumes:
   data-volume:

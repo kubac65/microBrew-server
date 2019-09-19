@@ -19,6 +19,7 @@ def get_decision_module():
     return DecisionModule()
 
 def main():
+    logging.info("Starting server")
     temp_loger = get_temp_logger()
     temp_range = get_temp_range()
     decision_module = get_decision_module()

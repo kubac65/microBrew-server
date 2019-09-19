@@ -17,8 +17,9 @@ class Server(object):
         self.__listen = True
 
         while self.__listen:
+            logging.info('Waiting for connections')
             connection, _ = self.__sock.accept()
-            logging.info('Controller connection accepted')
+            logging.info('Connection accepted')
 
             received_msg = []
             continue_reading = True
@@ -31,7 +32,9 @@ class Server(object):
                     self.__temp_logger.log(temp)
                     logging.info(f'Reported temperature: {temp}')
 
-                    # Send to decision module
+                    # Decision module will tell us whether the heater needs to be turned on or off.
+                    # But, together with that we'll send the temp ranges to the controller.
+                    # This will ensure that the controller will be able to maintaing the temperature even if the network connection has been proken.
                     heater_on = self.__decision_module.get_heater_desired_state(temp)
                     min_temp = self.__temp_range.min()
                     max_temp = self.__temp_range.max()
@@ -39,7 +42,7 @@ class Server(object):
 
                     # Send response (heating on/off)
                     connection.send(msg.encode('utf-8'))
-                    logging.debug(f'Controller response: {msg}')
+                    logging.debug(f'Response: {msg}')
 
                     continue_reading = False
     def stop(self):
