@@ -1,11 +1,11 @@
 from cloudant.client import CouchDB
+from cloudant.adapters import HTTPAdapter
 
 
 class BrewRepository(object):
     def __init__(self, db_host, db_port, db_username, db_password, db_database):
         url = f'http://{db_host}:{db_port}'
-        self.__client = CouchDB(
-            db_username, db_password, url=url, connect=True)
+        self.__client = CouchDB(db_username, db_password, url=url, connect=True, adapter = HTTPAdapter(max_retries=10))
         self.__db = self.__client.create_database(db_database)
 
     def get_temp_range(self, brew_id):

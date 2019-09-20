@@ -5,7 +5,7 @@ from . import DecisionModule
 from . import Server
 
 
-def get_temp_logger():
+def __get_temp_logger():
     db_host = os.environ['TS_DB_HOST']
     db_port = os.environ['TS_DB_PORT']
     db_username = os.environ['TS_DB_USERNAME']
@@ -14,7 +14,7 @@ def get_temp_logger():
     return TempLogger(db_host, db_port, db_username, db_password, db_database)
 
 
-def get_brew_repository():
+def __get_brew_repository():
     db_host = os.environ['BR_DB_HOST']
     db_port = os.environ['BR_DB_PORT']
     db_username = os.environ['BR_DB_USERNAME']
@@ -24,7 +24,7 @@ def get_brew_repository():
 
 
 def create_server():
-    temp_logger = get_temp_logger()
-    brew_repo = get_brew_repository()
+    temp_logger = __get_temp_logger()
+    brew_repo = __get_brew_repository()
     decision_module = DecisionModule(brew_repo)
     return Server(temp_logger, decision_module)

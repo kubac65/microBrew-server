@@ -5,10 +5,10 @@ services:
     image: micro-brew-server:latest
     build:
       context: .
-  timeseries_db:
+  timeseries-db:
     ports:
       - "8086:8086"
-  brew_db:
+  brew-db:
     ports:
       - "5984:5984"
 
