@@ -5,11 +5,11 @@ import os
 from microBrew import Server, TempLogger, TempRange, DecisionModule
 
 def get_temp_logger():
-    db_host = os.environ['DB_HOST']
-    db_port = os.environ['DB_PORT']
-    db_username = os.environ['DB_USERNAME']
-    db_password = os.environ['DB_PASSWORD']
-    db_database = os.environ['DB_DATABASE']
+    db_host = os.environ['TS_DB_HOST']
+    db_port = os.environ['TS_DB_PORT']
+    db_username = os.environ['TS_DB_USERNAME']
+    db_password = os.environ['TS_DB_PASSWORD']
+    db_database = os.environ['TS_DB_DATABASE']
     return TempLogger(db_host, db_port, db_username, db_password, db_database)
 
 def get_temp_range():
@@ -29,4 +29,3 @@ def main():
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     main()
-

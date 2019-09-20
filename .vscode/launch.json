@@ -11,11 +11,11 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "env": {
-                "DB_HOST": "localhost",
-                "DB_PORT": 8086,
-                "DB_USERNAME": "root",
-                "DB_PASSWORD": "root",
-                "DB_DATABASE": "micro-brew"
+                "TS_DB_HOST": "localhost",
+                "TS_DB_PORT": 8086,
+                "TS_DB_USERNAME": "root",
+                "TS_DB_PASSWORD": "root",
+                "TS_DB_DATABASE": "micro-brew"
             }
         }
     ]
