@@ -5,6 +5,16 @@ services:
     image: micro-brew-server:latest
     build:
       context: .
-  db:
+  timeseries_db:
     ports:
       - "8086:8086"
+  brew_db:
+    ports:
+      - "5984:5984"
+
+  chronograf:
+    image: chronograf:latest
+    ports:
+      - "8888:8888"
+    networks:
+      - backend

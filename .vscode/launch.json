@@ -9,13 +9,25 @@
             "type": "python",
             "request": "launch",
             "program": "${file}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Program",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/program.py",
             "console": "integratedTerminal",
             "env": {
                 "TS_DB_HOST": "localhost",
                 "TS_DB_PORT": 8086,
                 "TS_DB_USERNAME": "root",
                 "TS_DB_PASSWORD": "root",
-                "TS_DB_DATABASE": "micro-brew"
+                "TS_DB_DATABASE": "micro-brew",
+                "BR_DB_HOST": "localhost",
+                "BR_DB_PORT": 5984,
+                "BR_DB_USERNAME": "root",
+                "BR_DB_PASSWORD": "root",
+                "BR_DB_DATABASE": "micro-brew"
             }
         }
     ]

@@ -29,7 +29,7 @@ services:
     networks:
       - backend
     volumes:
-      - data-volume:/var/lib/db
+      - ts-db-data-volume:/var/lib/db
     deploy:
       restart_policy:
         condition: on-failure
@@ -45,9 +45,10 @@ services:
       restart_policy:
         condition: on-failure
     volumes:
-      - data-volume:/var/lib/db
+      - br-db-data-volume:/opt/couchdb/data
 
 networks:
   backend:
 volumes:
-  data-volume:
+  ts-db-data-volume:
+  br-db-data-volume:

@@ -2,12 +2,12 @@ import socket
 import logging
 
 listen_port = 52100
+brew_id = 'brew-1' # Hardcoded for now
 
 class Server(object):
-    def __init__(self, temp_logger, temp_range, decision_module):
+    def __init__(self, temp_logger, decision_module):
         self.__sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__listen = False
-        self.__temp_range = temp_range
         self.__temp_logger = temp_logger
         self.__decision_module = decision_module
 
@@ -34,11 +34,9 @@ class Server(object):
                     # Decision module will tell us whether the heater needs to be turned on or off.
                     # But, together with that we'll send the temp ranges to the controller.
                     # This will ensure that the controller will be able to maintaing the temperature even if the network connection has been proken.
-                    final_heater_state = 1 if self.__decision_module.get_heater_desired_state(beer_temp, ambient_temp, heater_state) else 0
-                    self.__temp_logger.log(beer_temp, ambient_temp, heater_state, final_heater_state)
-                    min_temp = self.__temp_range.min()
-                    max_temp = self.__temp_range.max()
-                    msg = f'{final_heater_state},{min_temp},{max_temp}'
+                    desired_heater_state, min_temp, max_temp = self.__decision_module.get_desired_state(brew_id, float(beer_temp), float(ambient_temp), bool(heater_state))
+                    self.__temp_logger.log(brew_id, beer_temp, ambient_temp, bool(heater_state), desired_heater_state)
+                    msg = f'{1 if desired_heater_state else 0},{min_temp},{max_temp}'
 
                     # Send response (heating on/off)
                     connection.send(msg.encode('utf-8'))
