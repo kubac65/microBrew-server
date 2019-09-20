@@ -20,8 +20,11 @@ services:
       TS_DB_USERNAME: root
       TS_TS_DB_PASSWORD: root
       TS_DB_DATABASE: micro-brew
-
       BR_DB_HOST: brew-db
+      BR_DB_PORT: 5984,
+      BR_DB_USERNAME: root,
+      BR_DB_PASSWORD: root,
+      BR_DB_DATABASE: micro-brew
 
   timeseries_db:
     image: influxdb:latest
