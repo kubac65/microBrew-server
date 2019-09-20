@@ -28,22 +28,23 @@ class Server(object):
                 if data:
                     received_msg.append(data)
                 else:
-                    temp = b''.join(received_msg).decode('utf-8')
-                    self.__temp_logger.log(temp)
-                    logging.info(f'Reported temperature: {temp}')
+                    beer_temp, ambient_temp, heater_state = b''.join(received_msg).decode('utf-8').split(',')
+                    logging.info(f'Beer temp: {beer_temp}   Ambient temp: {ambient_temp}')
 
                     # Decision module will tell us whether the heater needs to be turned on or off.
                     # But, together with that we'll send the temp ranges to the controller.
                     # This will ensure that the controller will be able to maintaing the temperature even if the network connection has been proken.
-                    heater_on = self.__decision_module.get_heater_desired_state(temp)
+                    final_heater_state = 1 if self.__decision_module.get_heater_desired_state(beer_temp, ambient_temp, heater_state) else 0
+                    self.__temp_logger.log(beer_temp, ambient_temp, heater_state, final_heater_state)
                     min_temp = self.__temp_range.min()
                     max_temp = self.__temp_range.max()
-                    msg = f'{heater_on},{min_temp},{max_temp}'
+                    msg = f'{final_heater_state},{min_temp},{max_temp}'
 
                     # Send response (heating on/off)
                     connection.send(msg.encode('utf-8'))
                     logging.debug(f'Response: {msg}')
 
                     continue_reading = False
+
     def stop(self):
         self.__listen = False

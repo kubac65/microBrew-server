@@ -10,17 +10,14 @@ class TempLogger(object):
         self.__client.create_database(db_database)
         self.__client.switch_database(db_database)
 
-    def log(self, temp):
-        """
-        Logs temperature in the influx db
-
-        """
+    def log(self, beer_temp, ambient_temp, initial_heater_state, final_heater_state):
         self.__client.write_points([{
             "measurement": time_series_name,
             "time": datetime.datetime.now().isoformat(),
             "fields": {
-                "heater_reported": "on",
-                "heater_set": "off",
-                "temp": temp
+                "initial_heater_state": initial_heater_state,
+                "final_heater_state": final_heater_state,
+                "beer_temp": beer_temp,
+                "ambient_temp": ambient_temp
             }
         }])

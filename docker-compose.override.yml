@@ -3,3 +3,8 @@ version: '3.7'
 services:
   server:
     image: micro-brew-server:latest
+    build:
+      context: .
+  db:
+    ports:
+      - "8086:8086"
