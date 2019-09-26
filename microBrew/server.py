@@ -2,11 +2,8 @@ import socket
 import logging
 import struct
 
-listen_port = 52100
-brew_id = 'brew-1'  # Hardcoded for now
-
 rcv_msg_size = 16
-
+listen_port = 52100
 
 class Server(object):
     def __init__(self, temp_logger, decision_module):
@@ -24,12 +21,6 @@ class Server(object):
             logging.info(f'Connection accepted from: {address}')
 
             brew_id, beer_temp, ambient_temp, heater_state, cooler_state = Server.__receive_message(connection)
-
-            logging.info(f'Brew id: {brew_id}')
-            logging.info(f'Beer temp: {beer_temp}')
-            logging.info(f'Ambient temp: {ambient_temp}')
-            logging.info(f'Heater state: {heater_state}')
-            logging.info(f'Cooler state: {cooler_state}')
 
             # Decision module will tell us whether the heater needs to be turned on or off.
             # But, together with that we'll send the temp ranges to the controller.

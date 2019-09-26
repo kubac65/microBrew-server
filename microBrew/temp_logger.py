@@ -1,3 +1,4 @@
+import logging
 import datetime
 from influxdb import InfluxDBClient
 
@@ -23,6 +24,11 @@ class TempLogger(object):
         """
         Persists the reading
         """
+
+        logging.info(f'Brew id: {brew_id}')
+        logging.info(f'Beer temp: {beer_temp}')
+        logging.info(f'Ambient temp: {ambient_temp}')
+        logging.info(f'Heater state: {initial_heater_state}')
 
         self.__client.write_points([{
             "measurement": time_series_name,
