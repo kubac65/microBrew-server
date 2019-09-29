@@ -49,5 +49,9 @@ class Server(object):
 
     @staticmethod
     def __send_message(sock, brew_id, heater_state, cooler_state, min_temp, max_temp):
+        # Message comes in in the following binary format and the byte order is little-endian
+        # |--brew id--|--heater state--|--cooler state--|--min temp--|--max temp--|
+        # |--4 bytes--|--2 bytes-------|--2 bytes-------|--4 bytes---|--4 bytes---|
+        # |--integer--|--bool----------|--bool----------|--float-----|--float-----|
         msg = struct.pack('<IHHff', int(brew_id), heater_state, cooler_state, min_temp, max_temp)
         sock.sendall(msg)
