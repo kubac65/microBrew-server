@@ -10,7 +10,7 @@ class BrewRepository(object):
 
     def get_brew_info(self, brew_id):
         return self.__db[brew_id]
-        
+
     def get_temp_range(self, brew_id):
         brew = self.__db[brew_id]
         min = brew['temp']['min']

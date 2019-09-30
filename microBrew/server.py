@@ -20,15 +20,15 @@ class Server(object):
             connection, address = sock.accept()
             logging.info(f'Connection accepted from: {address}')
 
-            brew_id, beer_temp, ambient_temp, heater_state, cooler_state = Server.__receive_message(connection)
+            brew_id, beer_temp, ambient_temp, heater_current_state, cooler_current_state = Server.__receive_message(connection)
 
             # Decision module will tell us whether the heater needs to be turned on or off.
             # But, together with that we'll send the temp ranges to the controller.
             # This will ensure that the controller will be able to maintaing the temperature even if the network connection has been proken.
-            desired_heater_state, min_temp, max_temp = self.__decision_module.get_desired_state(brew_id, float(beer_temp), float(ambient_temp), bool(heater_state))
-            self.__temp_logger.log(brew_id, beer_temp, ambient_temp, bool(heater_state), desired_heater_state)
+            heater_desired_state, cooler_desired_state, min_temp, max_temp = self.__decision_module.get_desired_state(brew_id, beer_temp, ambient_temp, heater_current_state, cooler_current_state)
+            self.__temp_logger.log(brew_id, beer_temp, ambient_temp, heater_current_state, heater_desired_state)
 
-            Server.__send_message(connection, brew_id, desired_heater_state, False, min_temp, max_temp)
+            Server.__send_message(connection, brew_id, heater_desired_state, cooler_desired_state, min_temp, max_temp)
             connection.close()
 
     @staticmethod
@@ -53,5 +53,5 @@ class Server(object):
         # |--brew id--|--heater state--|--cooler state--|--min temp--|--max temp--|
         # |--4 bytes--|--2 bytes-------|--2 bytes-------|--4 bytes---|--4 bytes---|
         # |--integer--|--bool----------|--bool----------|--float-----|--float-----|W
-        msg = struct.pack('<IHHff', int(brew_id), heater_state, cooler_state, min_temp, max_temp)
+        msg = struct.pack('<IffHH', int(brew_id), min_temp, max_temp, heater_state, cooler_state)
         sock.sendall(msg)
