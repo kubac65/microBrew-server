@@ -40,7 +40,7 @@ class Server(object):
             chunks.append(chunk)
             received_bytes = received_bytes + len(chunk)
 
-        # Message comes in in the following binary format and the byte order is little-endian
+        # Message comes in the following binary format and the byte order is little-endian
         # |--brew id--|--beer temp--|--ambient temp--|--heater state--|--cooler state--|
         # |--4 bytes--|--4 bytes----|--4 bytes-------|--2 bytes-------|--2 bytes-------|
         # |--integer--|--float------|--float---------|--bool----------|--bool----------|
@@ -49,9 +49,9 @@ class Server(object):
 
     @staticmethod
     def __send_message(sock, brew_id, heater_state, cooler_state, min_temp, max_temp):
-        # Message comes in in the following binary format and the byte order is little-endian
+        # Response is sent back to the controller in the following binary format and the byte order is little-endian
         # |--brew id--|--heater state--|--cooler state--|--min temp--|--max temp--|
         # |--4 bytes--|--2 bytes-------|--2 bytes-------|--4 bytes---|--4 bytes---|
-        # |--integer--|--bool----------|--bool----------|--float-----|--float-----|
+        # |--integer--|--bool----------|--bool----------|--float-----|--float-----|W
         msg = struct.pack('<IHHff', int(brew_id), heater_state, cooler_state, min_temp, max_temp)
         sock.sendall(msg)
