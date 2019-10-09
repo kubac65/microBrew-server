@@ -10,9 +10,9 @@ This project containe the source code for the server used for temperature monito
 ## Getting Started
 
 ### Installing Dependencies
-Before you can get started with development, you need to make sure thet all prerequisites are installed on your system. Project uses **InfluxDB** for recording temperatures, and **CouchDB** for storing brew batch metadata and recipes in the future. Those can be either installed on your system or run inside Docker container using provided `docker-compose.yml` file.
+Before you can get started with development, you need to make sure that all prerequisites are installed on your system. Project uses **InfluxDB** for recording temperatures, and **CouchDB** for storing brew batch metadata and recipes in the future. Those can be either installed on your system or run inside Docker container using provided `docker-compose.yml` file.
 
-Next, create Python virtual environment that will be used for development and install dependencies:
+Next, create Python virtual environment that will be used for development, and install required dependencies:
 
 ```bash
 # Create virtual environment
@@ -27,9 +27,9 @@ venv\Scripts\activate.bat # windows
 pip install requirements.txt
 ```
 
-### Configuration
+### Initial Setup
 
-Server reads its configuration from environment variables. All of the variables listed below, need to be set up.
+Server reads its configuration from environment variables. All of the variables listed below, need to be set up on your dev machine before running the server. Take a look at `docker-compose.yml` to see how those are configured in docker environment.
 
 | Variable Name  | Description            |
 | -------------- | ---------------------- |
