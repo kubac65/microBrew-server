@@ -1,8 +1,8 @@
 import os
-from . import TempLogger
-from . import BrewRepository
-from . import DecisionModule
-from . import Server
+from .temp_logger import TempLogger
+from .brew_repository import BrewRepository
+from .decision_module import DecisionModule
+from .server import Server
 
 
 def __get_temp_logger():

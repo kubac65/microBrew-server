@@ -2,16 +2,17 @@ import logging
 import datetime
 from influxdb import InfluxDBClient
 
+
 time_series_name = 'temperature'
 client_retries = 10
 
 
 class TempLogger(object):
     """
-    Temperature logger, responsible for persiting temperature readings
+    Temperature logger, responsible for persiting temperature readings in influx db
     """
 
-    def __init__(self, db_host, db_port, db_username, db_password, db_database):
+    def __init__(self, db_host: str, db_port: int, db_username: str, db_password: str, db_database: str):
         """
         Creates an instance of the TempLogger
         """
@@ -20,9 +21,9 @@ class TempLogger(object):
         self.__client.create_database(db_database)
         self.__client.switch_database(db_database)
 
-    def log(self, brew_id, beer_temp, ambient_temp, initial_heater_state, final_heater_state):
+    def log(self, brew_id: int, beer_temp: float, ambient_temp: float, initial_heater_state: bool, final_heater_state: bool):
         """
-        Persists the reading
+        Persists the reading in influx db
         """
 
         logging.info(f'Brew id: {brew_id}')

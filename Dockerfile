@@ -1,6 +1,7 @@
 FROM python:slim-stretch
 WORKDIR /app
-COPY . /app
+COPY ./src /app
+COPY requirements.txt /app
 RUN pip install -r requirements.txt
 
 EXPOSE 52100
