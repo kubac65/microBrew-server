@@ -38,7 +38,7 @@ class Server(object):
             # But, together with that we'll send the temp ranges to the controller.
             # This will ensure that the controller will be able to maintaing the temperature even if the network connection has been proken.
             heater_desired_state, cooler_desired_state, min_temp, max_temp = self.__decision_module.get_desired_state(brew_id, beer_temp, ambient_temp, heater_current_state, cooler_current_state)
-            self.__temp_logger.log(brew_id, beer_temp, ambient_temp, heater_current_state, heater_desired_state)
+            self.__temp_logger.log(brew_id, beer_temp, ambient_temp, heater_current_state, heater_desired_state, cooler_current_state, cooler_desired_state)
 
             Server.__send_message(connection, brew_id, heater_desired_state, cooler_desired_state, min_temp, max_temp)
             connection.close()
