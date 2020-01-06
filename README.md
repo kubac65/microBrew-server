@@ -27,7 +27,27 @@ venv\Scripts\activate.bat # windows
 pip install requirements.txt
 ```
 
-### Initial Setup
+### Initial Development Setup
+
+Running `docker-compose up` for the first time will fetch pull all required images from docker hub and create containers for InfluxDB and CouchDB. However, initial configuration needs to be performed to set up initial accounts that will be used by the application.
+
+#### CouchxDB Setup
+
+Open following [link](http://localhost:5984/_utils/#createAdmin/) in a browser and configure admin account.
+
+For development just use `root` as username and password.
+
+#### InfluxDB Setup
+
+InfluxDB doesn't require authentication by default, let's leave it this way for development.
+
+#### Chronograf Setup
+
+Chronograf is a dashboard that can be used for viewing records in `InfluxDB` database.
+
+Open following [link](http://localhost:8888/) in a browser. In setup wizard update connection url to `http://timeseries-db:8086`.
+
+#### docker-compose variables
 
 Server reads its configuration from environment variables. All of the variables listed below, need to be set up on your dev machine before running the server. Take a look at `docker-compose.yml` to see how those are configured in docker environment.
 
