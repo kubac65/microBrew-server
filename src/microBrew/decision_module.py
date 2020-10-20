@@ -5,7 +5,14 @@ class DecisionModule(object):
     def __init__(self, brew_repo: BrewRepository):
         self.__brew_repo = brew_repo
 
-    def get_desired_state(self, brew_id: int, beer_temp: float, ambient_temp: float, heater_current_state: bool, cooler_current_state: bool) -> (bool, bool, float, float):
+    def get_desired_state(
+        self,
+        brew_id: int,
+        beer_temp: float,
+        ambient_temp: float,
+        heater_current_state: bool,
+        cooler_current_state: bool,
+    ) -> (bool, bool, float, float):
         brew_info = self.__brew_repo.get_brew_info(brew_id)
 
         if not brew_info.active:
