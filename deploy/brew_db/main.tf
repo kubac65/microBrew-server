@@ -10,6 +10,10 @@ resource "docker_container" "couchdb_container" {
     name = "${var.name_prefix}-couchdb_container"
     image = docker_image.couchdb_image.latest
     restart = "always"
+    ports {
+        internal = 5984
+        external = 5984
+    }
     volumes {
         volume_name = docker_volume.couchdb_volume.name
         container_path = "/bitnami/couchdb"
