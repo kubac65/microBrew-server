@@ -1,24 +1,24 @@
 variable "name_prefix" {
-    default = "microBrew"
+  default = "microBrew"
 }
 
 
 variable "timeseriesdb_username" {
-    default = "microBrew"
+  default = "microBrew"
 }
 variable "timeseriesdb_password" {
-    default = "microBrew"
+  default = "microBrew"
 }
 variable "timeseriesdb_dbname" {
-    default = "ts"
+  default = "ts"
 }
 
 variable "brewdb_username" {
-    default = "microBrew"
+  default = "microBrew"
 }
 variable "brewdb_password" {
-    default = "microBrew"
+  default = "microBrew"
 }
 variable "brewdb_dbname" {
-    default = "br"
+  default = "br"
 }
