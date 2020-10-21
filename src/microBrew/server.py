@@ -1,17 +1,26 @@
-import socket
 import logging
 import struct
+from collections import namedtuple
+from socket import socket, AF_INET, SOCK_STREAM
 from .decision_module import DecisionModule
 from .temp_logger import TempLogger
 
 
-# Size of the expected message
-rcv_msg_size = 16
+RCV_MSG_SIZE = 37
+LISTEN_PORT = 52100
+CONNECTION_LIMIT = 10
 
-# Socket port used to listen for incoming connections
-listen_port = 52100
-
-connection_limit = 10
+SensorMessage = namedtuple(
+    "SensorMessage",
+    [
+        "mac_address",
+        "brew_id",
+        "beer_temp",
+        "ambient_temp",
+        "heater_state",
+        "cooler_state",
+    ],
+)
 
 
 class Server(object):
@@ -24,81 +33,99 @@ class Server(object):
         Starts listening for incoming connections
         """
 
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.bind(("", listen_port))
-        sock.listen(connection_limit)
+        sock = socket(AF_INET, SOCK_STREAM)
+        sock.bind(("", LISTEN_PORT))
+        sock.listen(CONNECTION_LIMIT)
 
         while True:
-            logging.info("Waiting for connections")
-            connection, address = sock.accept()
-            logging.info(f"Connection accepted from: {address}")
+            try:
+                logging.info("Waiting for connections")
+                connection, address = sock.accept()
+                self.__handle_connection(connection, address)
+            except MicroBrewError as e:
+                logging.error("Error occured")
+            except Exception as e:
+                logging.critical("Critical error encountered")
 
-            (
-                brew_id,
-                beer_temp,
-                ambient_temp,
-                heater_current_state,
-                cooler_current_state,
-            ) = Server.__receive_message(connection)
+    def __handle_connection(self, sock: socket, address):
+        logging.info(f"Accepted connection from: {address}")
+        received_msg = Server.__receive_message(sock)
 
-            # Decision module will tell us whether the heater needs to be turned on or off.
-            # But, together with that we'll send the temp ranges to the controller.
-            # This will ensure that the controller will be able to maintaing the temperature even if the network connection has been proken.
-            (
-                heater_desired_state,
-                cooler_desired_state,
-                min_temp,
-                max_temp,
-            ) = self.__decision_module.get_desired_state(
-                brew_id, beer_temp, ambient_temp, heater_current_state, cooler_current_state
+        # Update device status in devices DB and get device's active brew
+
+        active_brew_info = None
+
+        if active_brew_info == None:
+            logging.info(
+                f"Sensor: {received_msg.mac_address}, currently not assigned to an active brew"
             )
-            self.__temp_logger.log(
-                brew_id,
-                beer_temp,
-                ambient_temp,
-                heater_current_state,
-                heater_desired_state,
-                cooler_current_state,
-                cooler_desired_state,
-            )
-
             Server.__send_message(
-                connection,
-                brew_id,
-                heater_desired_state,
-                cooler_desired_state,
-                min_temp,
-                max_temp,
+                sock,
+                brew_id=-1,
+                heater_state=False,
+                cooler_state=False,
+                min_temp=0,
+                max_temp=100,
             )
-            connection.close()
+            return
+
+        # Decision module will tell us whether the heater needs to be turned on or off.
+        # But, together with that we'll send the temp ranges to the controller.
+        # This will ensure that the controller will be able to maintaing the temperature even if the network connection has been proken.
+        heater_target_state, cooler_target_state = (False, False)
+
+        self.__temp_logger.log(
+            brew_id,
+            beer_temp,
+            ambient_temp,
+            heater_current_state,
+            heater_desired_state,
+            cooler_current_state,
+            cooler_desired_state,
+        )
+
+        Server.__send_message(
+            sock,
+            brew_id=active_brew_info.brew_id,
+            heater_state=heater_target_state,
+            cooler_state=cooler_target_state,
+            min_temp=active_brew_info.min_temp,
+            max_temp=active_brew_info.max_temp,
+        )
+        sock.close()
+        logging.info(f"Closed connection from: {address}")
 
     @staticmethod
     def __receive_message(sock: socket):
         received_bytes = 0
         chunks = []
-        while received_bytes < rcv_msg_size:
-            chunk = sock.recv(rcv_msg_size - received_bytes)
+        while received_bytes < RCV_MSG_SIZE:
+            chunk = sock.recv(RCV_MSG_SIZE - received_bytes)
             chunks.append(chunk)
             received_bytes = received_bytes + len(chunk)
+            logging.info(received_bytes)
 
         # Message comes in the following binary format and the byte order is little-endian
         # |--brew id--|--beer temp--|--ambient temp--|--heater state--|--cooler state--|
         # |--4 bytes--|--4 bytes----|--4 bytes-------|--2 bytes-------|--2 bytes-------|
         # |--integer--|--float------|--float---------|--bool----------|--bool----------|
-        brew_id, beer_temp, ambient_temp, heater_state, cooler_state = struct.unpack(
-            "<IffHH", b"".join(chunks)
-        )
-        return (
-            int(brew_id),
-            float(beer_temp),
-            float(ambient_temp),
-            bool(heater_state),
-            bool(cooler_state),
+
+        (
+            mac_address,
+            brew_id,
+            beer_temp,
+            ambient_temp,
+            heater_state,
+            cooler_state,
+        ) = struct.unpack("<20sIffHH", b"".join(chunks))
+        loggger
+        return SensorMessage(
+            mac_address, brew_id, beer_temp, ambient_temp, heater_state, cooler_state
         )
 
     @staticmethod
     def __send_message(
-        sock,
+        sock: socket,
         brew_id: int,
         heater_state: bool,
         cooler_state: bool,
@@ -109,5 +136,7 @@ class Server(object):
         # |--brew id--|--min temp--|--max temp--|--heater state--|--cooler state--|
         # |--4 bytes--|--4 bytes---|--4 bytes---|--2 bytes-------|--2 bytes-------|
         # |--integer--|--float-----|--float-----|--bool----------|--bool----------|
-        msg = struct.pack("<IffHH", brew_id, min_temp, max_temp, heater_state, cooler_state)
+        msg = struct.pack(
+            "<IffHH", brew_id, min_temp, max_temp, heater_state, cooler_state
+        )
         sock.sendall(msg)

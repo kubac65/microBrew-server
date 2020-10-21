@@ -1,3 +1,4 @@
+import logging
 from .brew_repository import BrewRepository
 
 
@@ -15,7 +16,7 @@ class DecisionModule(object):
     ) -> (bool, bool, float, float):
         brew_info = self.__brew_repo.get_brew_info(brew_id)
 
-        if not brew_info.active:
+        if not brew_info or not brew_info.active:
             return (False, False, 0, 0)
 
         # For now I'll ignore all other parameters. But, in the future, some smarter control algorithm will be implemented

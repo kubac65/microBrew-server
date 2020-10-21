@@ -1,5 +1,10 @@
+import logging
+from collections import namedtuple
 from cloudant.client import CouchDB
 from cloudant.adapters import HTTPAdapter
+
+
+# BrewInfo = namedtuple("BrewInfo", ["brew_id", "active", "min_temp", "max_temp"])
 
 
 class BrewInfo(object):
@@ -12,7 +17,12 @@ class BrewInfo(object):
 
 class BrewRepository(object):
     def __init__(
-        self, db_host: str, db_port: int, db_username: str, db_password: str, db_database: str
+        self,
+        db_host: str,
+        db_port: int,
+        db_username: str,
+        db_password: str,
+        db_database: str,
     ):
         url = f"http://{db_host}:{db_port}"
         self.__client = CouchDB(
@@ -25,7 +35,13 @@ class BrewRepository(object):
         self.__db = self.__client.create_database(db_database)
 
     def get_brew_info(self, brew_id: int) -> BrewInfo:
-        brew = self.__db[str(brew_id)]
-        return BrewInfo(
-            int(brew["_id"]), brew["active"], brew["temp"]["min"], brew["temp"]["max"]
-        )
+        try:
+            brew = self.__db[str(brew_id)]
+            return BrewInfo(
+                int(brew["_id"]),
+                brew["active"],
+                brew["temp"]["min"],
+                brew["temp"]["max"],
+            )
+        except KeyError:
+            logging.warning(f"Brew: {brew_id} not found in the DB")

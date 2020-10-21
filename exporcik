@@ -1,0 +1,10 @@
+export TS_DB_HOST=127.0.0.1
+export TS_DB_PORT=8086
+export TS_DB_USERNAME=microBrew
+export TS_DB_PASSWORD=microBrew
+export TS_DB_DATABASE=ts
+export BR_DB_HOST=127.0.0.1
+export BR_DB_PORT=5984
+export BR_DB_USERNAME=microBrew
+export BR_DB_PASSWORD=microBrew
+export BR_DB_DATABASE=br

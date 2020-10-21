@@ -3,8 +3,7 @@ import datetime
 from influxdb import InfluxDBClient
 
 
-time_series_name = "temperature"
-db_connection_retry_count = 10
+TIMESERIES_NAME = "temperature"
 
 
 class TempLogger(object):
@@ -13,7 +12,13 @@ class TempLogger(object):
     """
 
     def __init__(
-        self, db_host: str, db_port: int, db_username: str, db_password: str, db_database: str
+        self,
+        db_host: str,
+        db_port: int,
+        db_username: str,
+        db_password: str,
+        db_database: str,
+        db_connection_retry_count: int = 10,
     ):
         """
         Creates an instance of the TempLogger
@@ -53,7 +58,7 @@ class TempLogger(object):
         self.__client.write_points(
             [
                 {
-                    "measurement": time_series_name,
+                    "measurement": TIMESERIES_NAME,
                     "time": datetime.datetime.now().isoformat(),
                     "tags": {"brew": brew_id},
                     "fields": {

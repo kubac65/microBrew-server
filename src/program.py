@@ -5,9 +5,7 @@ from microBrew import server_factory
 
 
 def main():
-    logging.basicConfig(
-        level=logging.DEBUG, format="%(asctime)-15s %(clientip)s %(user)-8s %(message)s"
-    )
+    logging.basicConfig(level=logging.DEBUG, format="%(asctime)-15s %(message)s")
     srv = server_factory.create_server()
     srv.start()
 
