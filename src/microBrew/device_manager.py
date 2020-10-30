@@ -2,9 +2,6 @@ import logging
 from datetime import datetime
 from cloudant.client import CouchDB
 
-STATUS_CREATED = "created"
-STATUS_UPDATED = "updated"
-
 
 class DeviceManager:
     def __init__(self, couch_db_client: CouchDB, db_name: str):
@@ -17,6 +14,10 @@ class DeviceManager:
             logging.info(f"Created new db {db_name=}")
 
     def update_status(self, mac_address: str, ip_address: str):
+        """
+        Updates device last seen timestamp and network address.
+        Return true if new device was added, otherwise None is returned
+        """
         last_seen = datetime.now().isoformat()
         if mac_address in self.__db:
             logging.info(
@@ -26,7 +27,7 @@ class DeviceManager:
             record["last_network_address"] = ip_address
             record["last_seen"] = last_seen
             record.save()
-            return mac_address
+            return True
         else:
             logging.info(
                 f"Creating device record {mac_address=}, {ip_address=}, {last_seen}"

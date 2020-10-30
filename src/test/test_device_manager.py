@@ -45,7 +45,9 @@ def test_update_status_device_does_not_exist(db_name, mac_address, ip_address):
     mock_couch_db_client.__getitem__.return_value = mock_couch_db
 
     dm = DeviceManager(mock_couch_db_client, db_name)
-    dm.update_status(mac_address, ip_address)
+    result = dm.update_status(mac_address, ip_address)
+
+    assert result is None
 
     expected_parameter = {
         "_id": mac_address,
@@ -66,7 +68,9 @@ def test_update_status_device_exists(db_name, mac_address, ip_address):
     mock_couch_db_client.__getitem__.return_value = mock_couch_db
 
     dm = DeviceManager(mock_couch_db_client, db_name)
-    dm.update_status(mac_address, ip_address)
+    result = dm.update_status(mac_address, ip_address)
+
+    assert result
 
     expected_record_calls = [
         call("last_network_address", ip_address),
