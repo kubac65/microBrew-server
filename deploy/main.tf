@@ -34,15 +34,15 @@ module "server" {
   name_prefix          = var.name_prefix
   backend_network_name = docker_network.backend_network.name
 
-  timeseriesdb_host     = module.influx_db.host
-  timeseriesdb_port     = module.influx_db.port
-  timeseriesdb_username = var.timeseriesdb_username
-  timeseriesdb_password = var.timeseriesdb_password
-  timeseriesdb_dbname   = var.timeseriesdb_dbname
+  influx_db_host     = module.influx_db.host
+  influx_db_port     = module.influx_db.port
+  influx_db_username = var.timeseriesdb_username
+  influx_db_password = var.timeseriesdb_password
 
-  brewdb_host     = module.couch_db.host
-  brewdb_port     = module.couch_db.port
-  brewdb_username = var.brewdb_username
-  brewdb_password = var.brewdb_password
-  brewdb_dbname   = var.brewdb_dbname
+  couch_db_host     = module.couch_db.host
+  couch_db_port     = module.couch_db.port
+  couch_db_username = var.brewdb_username
+  couch_db_password = var.brewdb_password
+
+  db_name_prefix = var.name_prefix
 }

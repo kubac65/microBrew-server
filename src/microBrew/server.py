@@ -4,9 +4,10 @@ from collections import namedtuple
 from socket import socket, AF_INET, SOCK_STREAM
 from .decision_module import DecisionModule
 from .temp_logger import TempLogger
+from .exceptions import MalformedMessageError
 
 
-RCV_MSG_SIZE = 37
+RCV_MSG_SIZE = 36
 LISTEN_PORT = 52100
 CONNECTION_LIMIT = 10
 
@@ -41,14 +42,12 @@ class Server(object):
             try:
                 logging.info("Waiting for connections")
                 connection, address = sock.accept()
-                self.__handle_connection(connection, address)
-            except MicroBrewError as e:
+                logging.info(f"Accepted connection from: {address[0]}")
+                self.__handle_connection(connection)
+            except MalformedMessageError:
                 logging.error("Error occured")
-            except Exception as e:
-                logging.critical("Critical error encountered")
 
-    def __handle_connection(self, sock: socket, address):
-        logging.info(f"Accepted connection from: {address}")
+    def __handle_connection(self, sock: socket):
         received_msg = Server.__receive_message(sock)
 
         # Update device status in devices DB and get device's active brew
@@ -61,7 +60,7 @@ class Server(object):
             )
             Server.__send_message(
                 sock,
-                brew_id=-1,
+                brew_id=0,
                 heater_state=False,
                 cooler_state=False,
                 min_temp=0,
@@ -103,7 +102,6 @@ class Server(object):
             chunk = sock.recv(RCV_MSG_SIZE - received_bytes)
             chunks.append(chunk)
             received_bytes = received_bytes + len(chunk)
-            logging.info(received_bytes)
 
         # Message comes in the following binary format and the byte order is little-endian
         # |--brew id--|--beer temp--|--ambient temp--|--heater state--|--cooler state--|
@@ -118,7 +116,7 @@ class Server(object):
             heater_state,
             cooler_state,
         ) = struct.unpack("<20sIffHH", b"".join(chunks))
-        loggger
+
         return SensorMessage(
             mac_address, brew_id, beer_temp, ambient_temp, heater_state, cooler_state
         )
@@ -136,6 +134,9 @@ class Server(object):
         # |--brew id--|--min temp--|--max temp--|--heater state--|--cooler state--|
         # |--4 bytes--|--4 bytes---|--4 bytes---|--2 bytes-------|--2 bytes-------|
         # |--integer--|--float-----|--float-----|--bool----------|--bool----------|
+        logging.debug(
+            f"Sending messge to sensor {brew_id=}, {heater_state=}, {cooler_state=}, {min_temp=}, {max_temp=}"
+        )
         msg = struct.pack(
             "<IffHH", brew_id, min_temp, max_temp, heater_state, cooler_state
         )

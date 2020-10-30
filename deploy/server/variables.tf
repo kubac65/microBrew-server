@@ -1,17 +1,17 @@
 variable "backend_network_name" {}
 variable "name_prefix" {}
 variable "image_version" {
-    default = "latest"
+  default = "latest"
 }
 
-variable "timeseriesdb_host" {}
-variable "timeseriesdb_port" {}
-variable "timeseriesdb_username" {}
-variable "timeseriesdb_password" {}
-variable "timeseriesdb_dbname" {}
+variable "influx_db_host" {}
+variable "influx_db_port" {}
+variable "influx_db_username" {}
+variable "influx_db_password" {}
 
-variable "brewdb_host" {}
-variable "brewdb_port" {}
-variable "brewdb_username" {}
-variable "brewdb_password" {}
-variable "brewdb_dbname" {}
+variable "couch_db_host" {}
+variable "couch_db_port" {}
+variable "couch_db_username" {}
+variable "couch_db_password" {}
+
+variable "db_name_prefix" {}
