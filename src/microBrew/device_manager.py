@@ -21,7 +21,7 @@ class DeviceManager:
         last_seen = datetime.now().isoformat()
         if mac_address in self.__db:
             logging.info(
-                f"Updating device record {mac_address=}, {ip_address=}, {last_seen}"
+                f"Updating device record {mac_address=}, {ip_address=}, {last_seen=}"
             )
             record = self.__db[mac_address]
             record["last_network_address"] = ip_address
@@ -30,7 +30,7 @@ class DeviceManager:
             return None
         else:
             logging.info(
-                f"Creating device record {mac_address=}, {ip_address=}, {last_seen}"
+                f"Creating device record {mac_address=}, {ip_address=}, {last_seen=}"
             )
             self.__db.create_document(
                 {

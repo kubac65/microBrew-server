@@ -27,11 +27,6 @@ def db_password():
 
 
 @pytest.fixture
-def db_name():
-    return "db"
-
-
-@pytest.fixture
 def brew_id():
     return 1
 

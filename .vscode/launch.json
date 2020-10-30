@@ -18,16 +18,15 @@
             "program": "${workspaceFolder}/src/program.py",
             "console": "integratedTerminal",
             "env": {
-                "TS_DB_HOST": "localhost",
-                "TS_DB_PORT": 8086,
-                "TS_DB_USERNAME": "root",
-                "TS_DB_PASSWORD": "root",
-                "TS_DB_DATABASE": "micro-brew",
-                "BR_DB_HOST": "localhost",
-                "BR_DB_PORT": 5984,
-                "BR_DB_USERNAME": "root",
-                "BR_DB_PASSWORD": "root",
-                "BR_DB_DATABASE": "micro-brew"
+                "INFLUX_DB_HOST": "127.0.0.1",
+                "INFLUX_DB_PORT": "8086",
+                "INFLUX_DB_USERNAME": "microBrew",
+                "INFLUX_DB_PASSWORD": "microBrew",
+                "COUCH_DB_HOST": "127.0.0.1",
+                "COUCH_DB_PORT": "5984",
+                "COUCH_DB_USERNAME": "microBrew",
+                "COUCH_DB_PASSWORD": "microBrew",
+                "DB_NAME_PREFIX": "microBrew"
             }
         }
     ]

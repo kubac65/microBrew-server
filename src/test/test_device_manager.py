@@ -8,16 +8,6 @@ from microBrew.device_manager import DeviceManager
 
 
 @pytest.fixture
-def db_name():
-    return "db name"
-
-
-@pytest.fixture
-def mac_address():
-    return "mac address"
-
-
-@pytest.fixture
 def ip_address():
     return "ip address"
 
