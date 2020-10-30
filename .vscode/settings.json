@@ -1,8 +1,5 @@
 {
     "python.pythonPath": "/home/kubac65/.pyenv/versions/microBrew/bin/python",
-    "python.linting.enabled": false,
-    "python.linting.pylintEnabled": true,
-    "python.linting.pycodestyleEnabled": false,
     "python.testing.pytestArgs": [
         "src"
     ],

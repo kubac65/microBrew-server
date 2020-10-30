@@ -27,7 +27,7 @@ class DeviceManager:
             record["last_network_address"] = ip_address
             record["last_seen"] = last_seen
             record.save()
-            return True
+            return None
         else:
             logging.info(
                 f"Creating device record {mac_address=}, {ip_address=}, {last_seen}"
@@ -39,4 +39,4 @@ class DeviceManager:
                     "last_seen": datetime.now().isoformat(),
                 }
             )
-            return None
+            return True
