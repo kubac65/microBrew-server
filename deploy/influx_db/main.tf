@@ -24,6 +24,6 @@ resource "docker_container" "influxdb_container" {
   env = [
     "INFLUXDB_DB=${var.influxdb_dbname}",
     "INFLUXDB_USER=${var.influxdb_user}",
-    "INFLUXDB_USER_password=${var.influxdb_password}"
+    "INFLUXDB_USER_PASSWORD=${var.influxdb_password}"
   ]
 }
