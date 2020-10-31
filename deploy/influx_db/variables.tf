@@ -1,7 +1,7 @@
 variable "backend_network_name" {}
 variable "name_prefix" {}
 variable "image_version" {
-  default = "latest"
+  default = "1.8.3"
 }
 
 variable "influxdb_user" {}
