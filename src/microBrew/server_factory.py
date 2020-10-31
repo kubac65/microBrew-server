@@ -54,6 +54,7 @@ def __get_couch_db_client() -> CouchDB:
         db_password,
         url=url,
         connect=True,
+        auto_renew=True,
         adapter=HTTPAdapter(max_retries=10),
     )
 
