@@ -19,5 +19,7 @@ class DecisionModule(object):
         if beer_temp <= brew_info.min_temp:
             return TargetState(heater_state=True, cooler_state=False)
 
-        else:
-            return TargetState(heater_state=False, cooler_state=False)
+        if beer_temp > brew_info.max_temp:
+            return TargetState(heater_state=False, cooler_state=True)
+
+        return TargetState(heater_state=False, cooler_state=False)

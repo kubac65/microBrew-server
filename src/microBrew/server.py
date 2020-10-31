@@ -9,7 +9,7 @@ from .brew_repository import BrewRepository
 from .exceptions import MicroBrewError
 
 
-RCV_MSG_SIZE = 36
+RCV_MSG_SIZE = 32
 LISTEN_PORT = 52100
 CONNECTION_LIMIT = 10
 
@@ -103,7 +103,6 @@ class Server(object):
 
         Server.__send_message(
             sock,
-            brew_id=0,
             heater_state=target_state.heater_state,
             cooler_state=target_state.cooler_state,
             min_temp=active_brew_info.min_temp,
@@ -119,19 +118,21 @@ class Server(object):
             chunks.append(chunk)
             received_bytes = received_bytes + len(chunk)
 
+        msg = b"".join(chunks)
+        logging.debug(f"Received msg: {msg}")
+
         # Message comes in the following binary format and the byte order is little-endian
-        # |--brew id--|--beer temp--|--ambient temp--|--heater state--|--cooler state--|
-        # |--4 bytes--|--4 bytes----|--4 bytes-------|--2 bytes-------|--2 bytes-------|
-        # |--integer--|--float------|--float---------|--bool----------|--bool----------|
+        # |--mac address--|--padding--|--beer temp--|--ambient temp--|--heater state--|--cooler state--|--padding--|
+        # |--17 bytes-----|--3 bytes--|--4 bytes----|--4 bytes-------|--1 byte--------|--1 byte--------|--2 bytes--|
+        # |--string-------|-----------|--float------|--float---------|--bool----------|--bool----------|-----------|
+
         (
             mac_address,
-            _,
-            brew_id,
             beer_temp,
             ambient_temp,
             heater_state,
             cooler_state,
-        ) = struct.unpack("<17s3sIffHH", b"".join(chunks))
+        ) = struct.unpack("<17s3xff??xx", msg)
 
         mac_address = mac_address.decode()
         return SensorMessage(
@@ -145,29 +146,26 @@ class Server(object):
     @staticmethod
     def __send_message(
         sock: socket,
-        brew_id: int,
         heater_state: bool,
         cooler_state: bool,
         min_temp: float,
         max_temp: float,
     ):
         # Response is sent back to the controller in the following binary format and the byte order is little-endian
-        # |--brew id--|--min temp--|--max temp--|--heater state--|--cooler state--|
-        # |--4 bytes--|--4 bytes---|--4 bytes---|--2 bytes-------|--2 bytes-------|
-        # |--integer--|--float-----|--float-----|--bool----------|--bool----------|
+        # |--min temp--|--max temp--|--heater state--|--cooler state--|
+        # |--4 bytes---|--4 bytes---|--2 bytes-------|--2 bytes-------|
+        # |--float-----|--float-----|--bool----------|--bool----------|
         logging.debug(
             f"Sending messge to device {heater_state=}, {cooler_state=}, {min_temp=}, {max_temp=}"
         )
-        msg = struct.pack(
-            "<IffHH", brew_id, min_temp, max_temp, heater_state, cooler_state
-        )
+        msg = struct.pack("<ff??", min_temp, max_temp, heater_state, cooler_state)
+        logging.debug(f"Sent msg: {msg}")
         sock.sendall(msg)
 
     @staticmethod
     def __send_message_to_unasigned_device(sock: socket):
         Server.__send_message(
             sock,
-            brew_id=0,
             heater_state=False,
             cooler_state=False,
             min_temp=0,
