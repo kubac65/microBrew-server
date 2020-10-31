@@ -169,5 +169,5 @@ class Server(object):
             heater_state=False,
             cooler_state=False,
             min_temp=0,
-            max_temp=100,
+            max_temp=0,
         )
