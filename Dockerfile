@@ -1,4 +1,4 @@
-FROM python:slim-stretch
+FROM python:3.8.5-slim
 WORKDIR /app
 COPY ./src /app
 COPY requirements.txt /app
