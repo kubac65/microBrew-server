@@ -6,7 +6,6 @@ from socket import AF_INET, SOCK_STREAM, socket
 from .brew_repository import BrewRepository
 from .decision_module import DecisionModule
 from .device_manager import DeviceManager
-from .exceptions import MicroBrewError
 from .temp_logger import TempLogger
 
 RCV_MSG_SIZE = 32
@@ -57,8 +56,6 @@ class Server(object):
                 self.__handle_connection(connection, address[0])
                 connection.close()
                 logging.info(f"Closed connection from: {address[0]}")
-            except MicroBrewError:
-                logging.error("Error occured")
             except Exception:
                 logging.exception("Unhandled exception occured")
 
