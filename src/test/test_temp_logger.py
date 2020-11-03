@@ -1,7 +1,8 @@
-import pytest
 import datetime
-from mock import patch
+
+import pytest
 from freezegun import freeze_time
+from mock import patch
 
 from microBrew.temp_logger import TempLogger
 

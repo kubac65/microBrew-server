@@ -1,8 +1,8 @@
-import context
-import pytest
 from datetime import datetime
-from mock import MagicMock, call
+
+import pytest
 from freezegun import freeze_time
+from mock import MagicMock, call
 
 from microBrew.device_manager import DeviceManager
 

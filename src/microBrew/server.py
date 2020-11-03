@@ -37,6 +37,7 @@ class Server(object):
         self.__brew_repository = brew_repository
         self.__temp_logger = temp_logger
         self.__decision_module = decision_module
+        self.__is_running = False
 
     def start(self):
         """
@@ -46,8 +47,9 @@ class Server(object):
         sock = socket(AF_INET, SOCK_STREAM)
         sock.bind(("", LISTEN_PORT))
         sock.listen(CONNECTION_LIMIT)
+        self.__is_running = True
 
-        while True:
+        while self.is_running():
             try:
                 logging.info("Waiting for connections")
                 connection, address = sock.accept()
@@ -59,6 +61,9 @@ class Server(object):
                 logging.error("Error occured")
             except Exception:
                 logging.exception("Unhandled exception occured")
+
+    def is_running(self) -> bool:
+        return self.__is_running
 
     def __handle_connection(self, sock: socket, ip_address: str):
         received_msg = Server.__receive_message(sock)
@@ -120,13 +125,12 @@ class Server(object):
             received_bytes = received_bytes + len(chunk)
 
         msg = b"".join(chunks)
-        logging.debug(f"Received msg: {msg.decode()}")
+        logging.debug(f"Received msg: {msg!r}")
 
         # Message comes in the following binary format and the byte order is little-endian
         # |--mac address--|--padding--|--beer temp--|--ambient temp--|--heater state--|--cooler state--|--padding--|
         # |--17 bytes-----|--3 bytes--|--4 bytes----|--4 bytes-------|--1 byte--------|--1 byte--------|--2 bytes--|
         # |--string-------|-----------|--float------|--float---------|--bool----------|--bool----------|-----------|
-
         (
             mac_address,
             beer_temp,
@@ -160,7 +164,7 @@ class Server(object):
             f"Sending messge to device {heater_state=}, {cooler_state=}, {min_temp=}, {max_temp=}"
         )
         msg = struct.pack("<ff??", min_temp, max_temp, heater_state, cooler_state)
-        logging.debug(f"Sent msg: {msg.decode()}")
+        logging.debug(f"Sent msg: {msg!r}")
         sock.sendall(msg)
 
     @staticmethod

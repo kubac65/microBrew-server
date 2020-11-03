@@ -1,4 +1,3 @@
-import context
 import pytest
 from mock import MagicMock
 
@@ -61,7 +60,7 @@ def test_get_device_active_valid_happy_path(db_name, mac_address, couch_db_respo
 
     assert result
     assert result.id == couch_db_response["_id"]
-    assert result.active == True
+    assert result.active is True
     assert result.min_temp == couch_db_response["temperature"]["min"]
     assert result.max_temp == couch_db_response["temperature"]["max"]
     assert result.device_mac_address == couch_db_response["device_mac_address"]
