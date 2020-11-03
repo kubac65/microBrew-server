@@ -1,13 +1,13 @@
 import logging
 import struct
 from collections import namedtuple
-from socket import socket, AF_INET, SOCK_STREAM
-from .decision_module import DecisionModule
-from .temp_logger import TempLogger
-from .device_manager import DeviceManager
-from .brew_repository import BrewRepository
-from .exceptions import MicroBrewError
+from socket import AF_INET, SOCK_STREAM, socket
 
+from .brew_repository import BrewRepository
+from .decision_module import DecisionModule
+from .device_manager import DeviceManager
+from .exceptions import MicroBrewError
+from .temp_logger import TempLogger
 
 RCV_MSG_SIZE = 32
 LISTEN_PORT = 52100
@@ -57,7 +57,7 @@ class Server(object):
                 logging.info(f"Closed connection from: {address[0]}")
             except MicroBrewError:
                 logging.error("Error occured")
-            except:
+            except Exception:
                 logging.exception("Unhandled exception occured")
 
     def __handle_connection(self, sock: socket, ip_address: str):
@@ -76,13 +76,14 @@ class Server(object):
             received_msg.mac_address
         )
 
-        if active_brew_info == None:
+        if active_brew_info is None:
             Server.__send_message_to_unasigned_device(sock)
             return
 
         # Decision module will tell us whether the heater needs to be turned on or off.
         # But, together with that we'll send the temp ranges to the controller.
-        # This will ensure that the controller will be able to maintaing the temperature even if the network connection has been proken.
+        # This will ensure that the controller will be able to maintaing the temperature
+        # even if the network connection has been proken.
         target_state = self.__decision_module.get_target_state(
             received_msg.beer_temp,
             received_msg.ambient_temp,
@@ -119,7 +120,7 @@ class Server(object):
             received_bytes = received_bytes + len(chunk)
 
         msg = b"".join(chunks)
-        logging.debug(f"Received msg: {msg}")
+        logging.debug(f"Received msg: {msg.decode()}")
 
         # Message comes in the following binary format and the byte order is little-endian
         # |--mac address--|--padding--|--beer temp--|--ambient temp--|--heater state--|--cooler state--|--padding--|
@@ -149,7 +150,7 @@ class Server(object):
         heater_state: bool,
         cooler_state: bool,
         min_temp: float,
-        max_temp: float,
+        max_temp: float,  # te
     ):
         # Response is sent back to the controller in the following binary format and the byte order is little-endian
         # |--min temp--|--max temp--|--heater state--|--cooler state--|
@@ -159,7 +160,7 @@ class Server(object):
             f"Sending messge to device {heater_state=}, {cooler_state=}, {min_temp=}, {max_temp=}"
         )
         msg = struct.pack("<ff??", min_temp, max_temp, heater_state, cooler_state)
-        logging.debug(f"Sent msg: {msg}")
+        logging.debug(f"Sent msg: {msg.decode()}")
         sock.sendall(msg)
 
     @staticmethod

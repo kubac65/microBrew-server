@@ -1,13 +1,14 @@
-import os
 import logging
-from .temp_logger import TempLogger
-from .brew_repository import BrewRepository
-from .device_manager import DeviceManager
-from .decision_module import DecisionModule
-from .server import Server
+import os
 
-from cloudant.client import CouchDB
 from cloudant.adapters import HTTPAdapter
+from cloudant.client import CouchDB
+
+from .brew_repository import BrewRepository
+from .decision_module import DecisionModule
+from .device_manager import DeviceManager
+from .server import Server
+from .temp_logger import TempLogger
 
 
 def create_server() -> Server:
@@ -21,7 +22,7 @@ def create_server() -> Server:
 
 def __get_temp_logger() -> TempLogger:
     db_host = os.environ["INFLUX_DB_HOST"]
-    db_port = os.environ["INFLUX_DB_PORT"]
+    db_port = int(os.environ["INFLUX_DB_PORT"])
     db_username = os.environ["INFLUX_DB_USERNAME"]
     db_password = os.environ["INFLUX_DB_PASSWORD"]
     db_name = f"{__get_db_name_prefix()}_temperature"

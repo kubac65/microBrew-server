@@ -1,7 +1,8 @@
 import logging
 from collections import namedtuple
-from cloudant.client import CouchDB
+from typing import Optional
 
+from cloudant.client import CouchDB
 
 BrewInfo = namedtuple(
     "BrewInfo", ["id", "active", "min_temp", "max_temp", "device_mac_address"]
@@ -18,7 +19,7 @@ class BrewRepository(object):
             self.__db = self.__client.create_database(db_name)
             logging.info(f"Created new db {db_name=}")
 
-    def get_device_active_brew(self, mac_address: str) -> BrewInfo:
+    def get_device_active_brew(self, mac_address: str) -> Optional[BrewInfo]:
         logging.info(f"Getting brew info for device: {mac_address}")
         results = self.__db.get_query_result(
             selector={"device_mac_address": mac_address, "active": True}
